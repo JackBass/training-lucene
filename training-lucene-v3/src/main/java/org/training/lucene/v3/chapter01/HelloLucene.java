@@ -96,7 +96,7 @@ public class HelloLucene {
 			Query query = parser.parse("java");
 			// 5、根据searcher搜索并且返回TopDocs
 			TopDocs tds = searcher.search(query, 10);
-			// 6、根据TopDocs获取ScoreDoc对象
+			// 6、根据TopDocs获取ScoreDoc评分对象
 			ScoreDoc[] sds = tds.scoreDocs;
 
 			for (ScoreDoc sd : sds) {
