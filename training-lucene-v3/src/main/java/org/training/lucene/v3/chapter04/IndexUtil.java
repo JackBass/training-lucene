@@ -1,4 +1,4 @@
-package org.training.lucene.v3.chapter03;
+package org.training.lucene.v3.chapter04;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
@@ -73,6 +74,9 @@ public class IndexUtil {
 		}
 	}
 
+	/**
+	 * 索引
+	 */
 	public void index() {
 		IndexWriter writer = null;
 		try {
@@ -110,6 +114,9 @@ public class IndexUtil {
 		}
 	}
 
+	/**
+	 * 查询
+	 */
 	public void query() {
 		try {
 			IndexReader reader = IndexReader.open(directory);
@@ -120,6 +127,134 @@ public class IndexUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
+
+	public void delete() {
+		IndexWriter writer = null;
+
+		try {
+			writer = new IndexWriter(directory, new IndexWriterConfig(
+					Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36)));
+			// 参数是一个选项，可以是一个Query:多个一系列的；也可以是一个Term
+			// 此时的删除并不是真正删除，而是存储到回收站当中
+			Term term = new Term("id", "1");
+			writer.deleteDocuments(term);
+		} catch (CorruptIndexException e) {
+			e.printStackTrace();
+		} catch (LockObtainFailedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (writer != null)
+					writer.close();
+			} catch (CorruptIndexException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void undelete() {
+		// 恢复时候要使用reader来恢复
+		try {
+			IndexReader reader = IndexReader.open(directory, false);
+			reader.undeleteAll();
+			System.out.println("numDocs:" + reader.numDocs());
+			System.out.println("maxdoc:" + reader.maxDoc());
+		} catch (CorruptIndexException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 强制删除，不会放入回收站
+	 */
+	public void forceDelete() {
+		IndexWriter writer = null;
+
+		try {
+			writer = new IndexWriter(directory, new IndexWriterConfig(
+					Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36)));
+			writer.forceMergeDeletes();
+		} catch (CorruptIndexException e) {
+			e.printStackTrace();
+		} catch (LockObtainFailedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (writer != null)
+					writer.close();
+			} catch (CorruptIndexException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * 手动合并
+	 * 
+	 */
+	public void merge() {
+		IndexWriter writer = null;
+
+		try {
+			writer = new IndexWriter(directory, new IndexWriterConfig(
+					Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36)));
+			// 合并索引为两段，不建议使用，会自动处理
+			writer.forceMerge(2);
+		} catch (CorruptIndexException e) {
+			e.printStackTrace();
+		} catch (LockObtainFailedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (writer != null)
+					writer.close();
+			} catch (CorruptIndexException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void update() {
+		// 它并不提供更新方法，先删除后再添加
+		
+		IndexWriter writer = null;
+
+		try {
+			writer = new IndexWriter(directory, new IndexWriterConfig(
+					Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36)));
+			// 合并索引为两段，不建议使用，会自动处理
+			writer.updateDocument(new Term("id" , "1"), new Document());
+		} catch (CorruptIndexException e) {
+			e.printStackTrace();
+		} catch (LockObtainFailedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (writer != null)
+					writer.close();
+			} catch (CorruptIndexException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 }
