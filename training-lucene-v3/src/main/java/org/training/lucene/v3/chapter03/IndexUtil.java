@@ -29,7 +29,7 @@ import org.apache.lucene.util.Version;
  * </pre>
  * 
  * <pre>
- * Field.Index（锁音域选项）
+ * Field.Index（索引域选项）
  * Index.ANALYZED:进行分词和索引，适用于标题，内容等。
  * Index.NOT_ANNLYZED:进行索引，但是不进行分词，如身份证号码、姓名、ID等，适用于精确搜索。
  * Index.ANYLYZED_NOT_NORMS:进行分词但是不存储norms信息，这个norms中包括了创建索引的时间和权值等信息，排序信息

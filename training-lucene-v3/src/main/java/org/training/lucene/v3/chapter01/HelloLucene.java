@@ -38,7 +38,6 @@ public class HelloLucene {
 			// 2、创建IndexWriter
 			IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_36,
 					new StandardAnalyzer(Version.LUCENE_36));
-
 			writer = new IndexWriter(directory, iwc);
 
 			// 3、创建Document对象
@@ -73,7 +72,6 @@ public class HelloLucene {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	/**
@@ -111,10 +109,8 @@ public class HelloLucene {
 			reader.close();
 			searcher.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
