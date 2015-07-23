@@ -21,4 +21,9 @@ public class SearchUtilTest {
 	public void searchByTermRange() {
 		su.searchByTermRange("id", "1", "3", 10);
 	}
+
+	@Test
+	public void searchByWildcard() {
+		su.searchByWildcard("email", "*@itat.org", 5);;
+	}
 }

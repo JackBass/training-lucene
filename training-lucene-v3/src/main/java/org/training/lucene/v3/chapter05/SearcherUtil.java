@@ -257,6 +257,13 @@ public class SearcherUtil {
 		}
 	}
 
+	/**
+	 * 前缀搜索
+	 * 
+	 * @param field
+	 * @param value
+	 * @param num
+	 */
 	public void searchByPrefix(String field, String value, int num) {
 		try {
 			IndexSearcher searcher = getSearcher();
@@ -277,6 +284,13 @@ public class SearcherUtil {
 		}
 	}
 
+	/**
+	 * 通配符搜索
+	 * 
+	 * @param field
+	 * @param value
+	 * @param num
+	 */
 	public void searchByWildcard(String field, String value, int num) {
 		try {
 			IndexSearcher searcher = getSearcher();
@@ -298,6 +312,11 @@ public class SearcherUtil {
 		}
 	}
 
+	/**
+	 * 布尔搜索
+	 * 
+	 * @param num
+	 */
 	public void searchByBoolean(int num) {
 		try {
 			IndexSearcher searcher = getSearcher();
@@ -324,7 +343,12 @@ public class SearcherUtil {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * 短语查询
+	 * 
+	 * @param num
+	 */
 	public void searchByPhrase(int num) {
 		try {
 			IndexSearcher searcher = getSearcher();
