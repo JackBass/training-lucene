@@ -198,7 +198,15 @@ public class SearcherUtil {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * 范围查询
+	 * 
+	 * @param field
+	 * @param start
+	 * @param end
+	 * @param num
+	 */
 	public void searchByTermRange(String field, String start, String end,
 			int num) {
 		try {
@@ -220,6 +228,14 @@ public class SearcherUtil {
 		}
 	}
 
+	/**
+	 * 数字范围来查询
+	 * 
+	 * @param field
+	 * @param start
+	 * @param end
+	 * @param num
+	 */
 	public void searchByNumricRange(String field, int start, int end, int num) {
 		try {
 			IndexSearcher searcher = getSearcher();
