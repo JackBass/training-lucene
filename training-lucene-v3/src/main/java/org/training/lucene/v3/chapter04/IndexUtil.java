@@ -3,17 +3,18 @@ package org.training.lucene.v3.chapter04;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Date;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Index;
-import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.document.NumericField;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
@@ -64,6 +65,7 @@ public class IndexUtil {
 			"jake" };
 
 	private Directory directory = null;
+	private static IndexReader reader = null;
 
 	public IndexUtil() {
 		File indexed = Paths.get("./src/resources/index-files").toFile();
@@ -93,6 +95,55 @@ public class IndexUtil {
 						Field.Index.ANALYZED));
 				doc.add(new Field("name", names[i], Field.Store.YES,
 						Field.Index.NOT_ANALYZED_NO_NORMS));
+				writer.addDocument(doc);
+			}
+		} catch (CorruptIndexException e) {
+			e.printStackTrace();
+		} catch (LockObtainFailedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (CorruptIndexException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	/**
+	 * 增加权重
+	 */
+	public void indexWithBoost() {
+		IndexWriter writer = null;
+		try {
+			writer = new IndexWriter(directory, new IndexWriterConfig(
+					Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36)));
+			Document doc = null;
+			for (int i = 0; i < ids.length; i++) {
+				doc = new Document();
+				doc.add(new Field("id", ids[i], Field.Store.YES,
+						Field.Index.NOT_ANALYZED_NO_NORMS));
+				doc.add(new Field("email", emails[i], Field.Store.YES,
+						Field.Index.NOT_ANALYZED));
+				doc.add(new Field("content", contents[i], Field.Store.NO,
+						Field.Index.ANALYZED));
+				doc.add(new Field("name", names[i], Field.Store.YES,
+						Field.Index.NOT_ANALYZED_NO_NORMS));
+				if (i % 2 == 0) {
+					doc.setBoost(1.5f);
+				}
+				// 存储数字
+				doc.add(new NumericField("attach", Field.Store.YES, true)
+						.setIntValue(attachs[i]));
+				// 存储日期
+				doc.add(new NumericField("date", Field.Store.YES, true)
+						.setLongValue(new Date().getTime()));
 				writer.addDocument(doc);
 			}
 		} catch (CorruptIndexException e) {
@@ -170,7 +221,28 @@ public class IndexUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public IndexSearcher getSearcher() {
+		try {
+			if (reader == null) {
+				reader = IndexReader.open(directory);
+			} else {
+				IndexReader tr = IndexReader.openIfChanged(reader);
+				if (tr != null) {
+					reader.close();
+					reader = tr;
+				}
+			}
+			return new IndexSearcher(reader);
+		} catch (CorruptIndexException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
 	/**
 	 * 强制删除，不会放入回收站
 	 */
@@ -198,7 +270,7 @@ public class IndexUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * 手动合并
 	 * 
@@ -228,17 +300,15 @@ public class IndexUtil {
 			}
 		}
 	}
-	
+
 	public void update() {
 		// 它并不提供更新方法，先删除后再添加
-		
 		IndexWriter writer = null;
-
 		try {
 			writer = new IndexWriter(directory, new IndexWriterConfig(
 					Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36)));
 			// 合并索引为两段，不建议使用，会自动处理
-			writer.updateDocument(new Term("id" , "1"), new Document());
+			writer.updateDocument(new Term("id", "1"), new Document());
 		} catch (CorruptIndexException e) {
 			e.printStackTrace();
 		} catch (LockObtainFailedException e) {
@@ -256,5 +326,5 @@ public class IndexUtil {
 			}
 		}
 	}
-	
+
 }
