@@ -375,6 +375,12 @@ public class SearcherUtil {
 		}
 	}
 
+	/**
+	 * 模糊查询
+	 * 
+	 * 
+	 * @param num
+	 */
 	public void searchByFuzzy(int num) {
 		try {
 			IndexSearcher searcher = getSearcher();
@@ -396,7 +402,13 @@ public class SearcherUtil {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * 使用Parser转换器语法搜索
+	 * 
+	 * @param query
+	 * @param num
+	 */
 	public void searchByQueryParse(Query query, int num) {
 		try {
 			IndexSearcher searcher = getSearcher();
