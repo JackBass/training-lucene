@@ -428,7 +428,14 @@ public class SearcherUtil {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * 普通分页查询
+	 * 
+	 * @param query
+	 * @param pageIndex
+	 * @param pageSize
+	 */
 	public void searchPage(String query, int pageIndex, int pageSize) {
 		try {
 			Directory dir = FileIndexUtils.getDirectory();
